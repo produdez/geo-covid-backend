@@ -13,12 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from us_covid_api import urls as covid_api_url
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from django.conf import settings
+from django.views.static import serve 
+from django.views.generic.base import RedirectView
+
+
+
 urlpatterns = [
+    path('', RedirectView.as_view(url='/doc', permanent=False), name='index'),
     path('admin/', admin.site.urls),
     path('api-auth/',include('rest_framework.urls')),
     path('api-covid/', include(covid_api_url)),
-    # Todo: research a good package to generate doc string UI
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), # ! IMPORTANT For serving static files
 ]
+
+# API Doc Views
+urlpatterns += [
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('doc/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+]
+
+
