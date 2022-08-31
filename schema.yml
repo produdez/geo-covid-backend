@@ -1,19 +1,18 @@
-# Schema for API DOC UI (drf_spectacular)
 openapi: 3.0.3
 info:
   title: Geo Covid API
   version: 1.0.0
   description: Your project description
 paths:
-  /groups/:
+  /api-covid/groups/:
     get:
-      operationId: groups_list
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_list
       tags:
-      - groups
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -21,152 +20,152 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Group'
+                  $ref: '#/components/schemas/Report'
           description: ''
     post:
-      operationId: groups_create
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_create
       tags:
-      - groups
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
         required: true
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/Report'
           description: ''
-  /groups/{id}/:
+  /api-covid/groups/{id}/:
     get:
-      operationId: groups_retrieve
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_retrieve
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this group.
+        description: A unique integer value identifying this report.
         required: true
       tags:
-      - groups
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/Report'
           description: ''
     put:
-      operationId: groups_update
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_update
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this group.
+        description: A unique integer value identifying this report.
         required: true
       tags:
-      - groups
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/Report'
         required: true
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/Report'
           description: ''
     patch:
-      operationId: groups_partial_update
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_partial_update
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this group.
+        description: A unique integer value identifying this report.
         required: true
       tags:
-      - groups
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedGroup'
+              $ref: '#/components/schemas/PatchedReport'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedGroup'
+              $ref: '#/components/schemas/PatchedReport'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedGroup'
+              $ref: '#/components/schemas/PatchedReport'
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/Report'
           description: ''
     delete:
-      operationId: groups_destroy
-      description: API endpoint that allows groups to be viewed or edited.
+      operationId: api_covid_groups_destroy
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this group.
+        description: A unique integer value identifying this report.
         required: true
       tags:
-      - groups
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '204':
           description: No response body
-  /users/:
+  /api-covid/users/:
     get:
-      operationId: users_list
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_list
       tags:
-      - users
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -174,221 +173,209 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/State'
           description: ''
     post:
-      operationId: users_create
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_create
       tags:
-      - users
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
         required: true
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/State'
           description: ''
-  /users/{id}/:
+  /api-covid/users/{id}/:
     get:
-      operationId: users_retrieve
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_retrieve
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this state.
         required: true
       tags:
-      - users
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/State'
           description: ''
     put:
-      operationId: users_update
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_update
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this state.
         required: true
       tags:
-      - users
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/State'
         required: true
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/State'
           description: ''
     patch:
-      operationId: users_partial_update
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_partial_update
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this state.
         required: true
       tags:
-      - users
+      - api-covid
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedState'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedState'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedState'
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/State'
           description: ''
     delete:
-      operationId: users_destroy
-      description: API endpoint that allows users to be viewed or edited.
+      operationId: api_covid_users_destroy
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this state.
         required: true
       tags:
-      - users
+      - api-covid
       security:
       - cookieAuth: []
       - basicAuth: []
+      - {}
       responses:
         '204':
           description: No response body
 components:
   schemas:
-    Group:
+    PatchedReport:
       type: object
       properties:
-        url:
+        date:
+          type: string
+          format: date-time
+        state:
           type: string
           format: uri
-          readOnly: true
+        death:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+    PatchedState:
+      type: object
+      properties:
         name:
           type: string
-          maxLength: 150
+        initials:
+          type: string
+          maxLength: 2
+    Report:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        state:
+          type: string
+          format: uri
+        death:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
       required:
+      - date
+      - state
+    State:
+      type: object
+      properties:
+        name:
+          type: string
+        initials:
+          type: string
+          maxLength: 2
+      required:
+      - initials
       - name
-      - url
-    PatchedGroup:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          readOnly: true
-        name:
-          type: string
-          maxLength: 150
-    PatchedUser:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          readOnly: true
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          title: Email address
-          maxLength: 254
-        groups:
-          type: array
-          items:
-            type: string
-            format: uri
-          description: The groups this user belongs to. A user will get all permissions
-            granted to each of their groups.
-    User:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          readOnly: true
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          title: Email address
-          maxLength: 254
-        groups:
-          type: array
-          items:
-            type: string
-            format: uri
-          description: The groups this user belongs to. A user will get all permissions
-            granted to each of their groups.
-      required:
-      - url
-      - username
   securitySchemes:
     basicAuth:
       type: http

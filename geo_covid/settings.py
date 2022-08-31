@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import environ
 import os
-import sys
 
 # Default environment values
 env = environ.Env(
@@ -39,15 +38,20 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # app
     'us_covid_api', 
+    # django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # django_rest_api
     'rest_framework',
+    # extension
     'django_extensions',
+    # api doc ui
     'drf_spectacular',
     'drf_spectacular_sidecar',
 ]
@@ -90,11 +94,20 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'geo-covid',
-        'ENFORCE_SCHEMA': False,
+        'ENFORCE_SCHEMA': True,
         'CLIENT': {
            'host': 'localhost',
-        }
-    }
+        },
+        'LOGGING': {
+            'version': 1,
+            'loggers': {
+                'djongo': {
+                    'level': 'DEBUG',
+                    'propagate': False,                        
+                }
+            },
+            },
+}
 }
 
 
