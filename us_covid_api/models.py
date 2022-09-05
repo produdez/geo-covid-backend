@@ -4,9 +4,17 @@ class State(models.Model):
     initials = models.CharField(max_length=2, unique=True)
     name = models.TextField(unique=True)
 class Report(models.Model):
-    date = models.DateTimeField()
-    state = models.ForeignKey(State, on_delete=models.DO_NOTHING)
+    class Meta:
+        unique_together = (('date','state'))
+        indexes = [
+            models.Index(fields=['date']),
+        ]
+        ordering = ['date']
 
+    date = models.DateTimeField()
+    state = models.ForeignKey(State, on_delete=models.DO_NOTHING) # NOTE: state have index by default being a ForeignKey (https://stackoverflow.com/questions/5984842/does-django-automatically-generate-indexes-for-foreign-keys-columns)
+
+    # TODO: Check data to find exact meaning of confirm, increase, cumulative and update serializer! TAG: thi
     # stats
     death = models.IntegerField(blank=True)
     death_confirmed = models.IntegerField(blank=True)

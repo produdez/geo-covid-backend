@@ -184,7 +184,6 @@ from ast import arg
 
 
 def run(*args):
-    # TODO: add indexes and unique constraints
     print('script args: ', args)
     # Default behavior is run all below tasks
     if 'no-clear-migrations' not in args: clear_migrations()
@@ -221,7 +220,7 @@ if IS_NOTEBOOK:
     print("Main    : all done")
 
 
-# In[ ]:
+# In[11]:
 
 
 '''
@@ -299,7 +298,7 @@ def stats_one_state_all_days(state_initials, verbose = True):
     reports = Report.objects.filter(state_id= state.id)
     if verbose: print('Report retrieved: ', reports.count())
     if len(reports) == 0: print('No reports found at given date!')
-# def stats_few_state_all_days(): pass # ! OUT OF SCOPE
+# def stats_few_state_all_days(): pass #  OUT OF SCOPE
 
 
 # Results
@@ -312,7 +311,7 @@ if IS_NOTEBOOK:
     examine_thread_speed(stats_one_state_all_days, args=(random_state_initials(),));
 
 
-# In[ ]:
+# In[12]:
 
 
 
@@ -340,7 +339,7 @@ if IS_NOTEBOOK:
     benchmark(stats_one_state_all_days, to_args(states_initials_list))
 
 
-# In[ ]:
+# In[13]:
 
 
 if IS_NOTEBOOK:
