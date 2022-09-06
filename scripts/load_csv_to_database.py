@@ -198,7 +198,6 @@ def run(*args):
     print('Shape: ', df.shape)
     df.columns = list(df.columns.map(lambda x: camel_case_to_snake_case(x)))
     load_reports(df)
-    # TODO: process data somehow
     print('Done importing')
 
 
@@ -298,7 +297,7 @@ def stats_one_state_all_days(state_initials, verbose = True):
     reports = Report.objects.filter(state_id= state.id)
     if verbose: print('Report retrieved: ', reports.count())
     if len(reports) == 0: print('No reports found at given date!')
-# def stats_few_state_all_days(): pass #  OUT OF SCOPE
+# def stats_few_state_all_days(): pass # ! OUT OF SCOPE
 
 
 # Results
