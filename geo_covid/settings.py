@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     # api doc ui
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    # cors
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # cors
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'geo_covid.urls'
@@ -173,3 +177,6 @@ SPECTACULAR_SETTINGS = {
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
 }
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True # NOTE: remove this when want to restrict backend access
