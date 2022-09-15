@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
     path('states/', views.StatesDetail.as_view(), name='states-detail'),
-    path('state/<int:id>/', views.StateDetail.as_view(), name='state-detail'),
+    path('state/id/<int:id>/', views.StateDetail.as_view(), name='state-detail'),
+    path('state/init/<str:initials>/', views.StateByInitials.as_view(), name='state-by-init'),
+    path('state/name/<str:name>/', views.StateByName.as_view(), name='state-by-name'),
     path('reports/', views.Reports.as_view(), name='reports'),
     path('state-reports/<int:state_id>/', views.StateReports.as_view(), name='state-reports'),
     re_path(

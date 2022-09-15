@@ -17,7 +17,7 @@ import os
 # Default environment values
 env = environ.Env(
     # set casting, default value
-    DEBUG=(bool, False),
+    DEBUG=(bool, True),
     SECRET_KEY=(str,'django-insecure-3!-(=vu^&v0pp*w*o)&5$3(4wu#jm(7!w1y=!*61@93#h94_d$'),
 )
 
@@ -102,16 +102,7 @@ DATABASES = {
         'CLIENT': {
            'host': 'localhost',
         },
-        'LOGGING': {
-            'version': 1,
-            'loggers': {
-                'djongo': {
-                    'level': 'DEBUG',
-                    'propagate': False,                        
-                }
-            },
-            },
-}
+    }
 }
 
 

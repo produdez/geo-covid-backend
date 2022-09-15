@@ -5,6 +5,8 @@ from us_covid_api.serializers import StateSerializer, ReportSerializer
 from rest_framework.exceptions import NotFound
 from datetime import datetime, time, timedelta
 from django.utils.timezone import make_aware
+from rest_framework.renderers import JSONRenderer
+
 
 class StatesDetail(generics.ListAPIView):
     '''
@@ -20,6 +22,24 @@ class StateDetail(generics.RetrieveAPIView):
     lookup_field = 'id'
     queryset = State.objects.all()
     serializer_class = StateSerializer
+
+class StateByInitials(generics.RetrieveAPIView):
+    '''
+        Detail of a state
+        lookup by initials
+    '''
+    lookup_field = 'initials'
+    queryset = State.objects.all()
+    serializer_class = StateSerializer
+class StateByName(generics.RetrieveAPIView):
+    '''
+        Detail of a state
+        lookup by name
+    '''
+    lookup_field = 'name'
+    queryset = State.objects.all()
+    serializer_class = StateSerializer
+
 class Reports(generics.ListAPIView):
     '''
         All reports
