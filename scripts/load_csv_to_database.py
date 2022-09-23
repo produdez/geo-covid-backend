@@ -35,22 +35,6 @@ print('IS_NOTEBOOK: ', IS_NOTEBOOK)
 # In[3]:
 
 
-import logging
-import sys
-
-root = logging.getLogger()
-root.setLevel(logging.DEBUG)
-
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-root.addHandler(handler)
-
-
-# In[4]:
-
-
 ''' Activate django env if is in notebook '''
 
 if IS_NOTEBOOK:
@@ -59,7 +43,7 @@ if IS_NOTEBOOK:
     django.setup()
 
 
-# In[5]:
+# In[4]:
 
 
 '''
@@ -80,7 +64,7 @@ def run_bash_cmd(command: str):
     if error: print('Err: ', decode_output(error))
 
 
-# In[6]:
+# In[5]:
 
 
 '''
@@ -122,7 +106,7 @@ def print_settings():
     run_bash_cmd("python manage.py print_settings")
 
 
-# In[7]:
+# In[6]:
 
 
 '''
@@ -135,13 +119,16 @@ from us_covid_api.models import Report, State
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 
+def load_states(state_df: pd.DataFrame):
+    def generate_state(state_record):
+        state = State(name=state_record['name'], initials=state_record['initials'])
+        state.save()
+    
+    state_df.apply(generate_state, axis = 1)
+
 def load_reports(report_df: pd.DataFrame):
     def generate_report(report_record: pd.Series):
-        try:
-            state = State.objects.get(initials=report_record['state'])
-        except ObjectDoesNotExist as e:
-            state = State(name=report_record['state'], initials=report_record['state'])
-            state.save()
+        state = State.objects.get(initials=report_record['state'])
 
         report_record.loc['state'] = state
         report_record.loc['date'] = make_aware(report_record.loc['date'])
@@ -149,10 +136,11 @@ def load_reports(report_df: pd.DataFrame):
 
         report_obj = Report(id=None, **report_dict)
         report_obj.save()
+
     report_df.apply(generate_report, axis=1)
 
 
-# In[8]:
+# In[7]:
 
 
 ''' Testing code '''
@@ -173,7 +161,7 @@ def sample_code():
     print('DONE')
 
 
-# In[9]:
+# In[8]:
 
 
 '''
@@ -195,13 +183,16 @@ def run(*args):
     print('-----DONE PREP-----------------')
     # Data processing part
     df = pd.read_csv('data/all-states-history.csv', parse_dates=['date'])
-    print('Shape: ', df.shape)
+    df_state = pd.read_json('data/states.json')
+    print('Shape df: ', df.shape)
+    print('Shape df_state: ', df_state.shape)
     df.columns = list(df.columns.map(lambda x: camel_case_to_snake_case(x)))
+    load_states(df_state)
     load_reports(df)
     print('Done importing')
 
 
-# In[10]:
+# In[9]:
 
 
 # ''' Notebook test run '''
@@ -219,7 +210,7 @@ if IS_NOTEBOOK:
     print("Main    : all done")
 
 
-# In[11]:
+# In[ ]:
 
 
 '''
@@ -230,7 +221,8 @@ import timeit
 from random import randrange, seed, randint
 from datetime import timedelta
 import datetime
-
+import threading
+import time
 # Settings
 DAYS_INTERVAL = 5 
 seed(0)
@@ -310,7 +302,7 @@ if IS_NOTEBOOK:
     examine_thread_speed(stats_one_state_all_days, args=(random_state_initials(),));
 
 
-# In[12]:
+# In[ ]:
 
 
 
@@ -338,7 +330,7 @@ if IS_NOTEBOOK:
     benchmark(stats_one_state_all_days, to_args(states_initials_list))
 
 
-# In[13]:
+# In[ ]:
 
 
 if IS_NOTEBOOK:

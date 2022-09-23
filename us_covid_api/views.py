@@ -99,7 +99,6 @@ class DayRangeReport(generics.ListAPIView):
             end_day = start_day + timedelta(days=int(self.kwargs['day_range'])) # NOTE: currently only accepting range of 1-20 (by url matching in urls.py)
             time_range = (make_aware(datetime.combine(start_day, time.min)),
                 make_aware(datetime.combine(end_day, time.max)))
-            print(self.kwargs)
             return Report.objects.filter(date__range= time_range)
         except Exception as _:
             raise NotFound('Invalid date (must be yyyy/mm/dd)')

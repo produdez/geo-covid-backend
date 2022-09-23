@@ -7,11 +7,10 @@ class StateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'name', 'initials']
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
-    state = StateSerializer()
     class Meta:
         model = Report
         fields = [
-            'date', 'state', 
+            'date', 'state_id',
             'death', 'death_confirmed', 'death_increase', 'death_probable',
             'positive', 'positive_increase', 'positive_cases_viral',
             'negative', 'negative_increase',
