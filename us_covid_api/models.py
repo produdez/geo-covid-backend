@@ -1,13 +1,19 @@
 from djongo import models
-
 """
     Dataset docs:
     v1: https://covidtracking.com/data/api (most description is here!)
     v2: https://covidtracking.com/data/api/version-2
 """
+
 class State(models.Model):
     initials = models.CharField(max_length=2, unique=True)
     name = models.TextField(unique=True)
+
+class Polygon(models.Model):
+    coordinates = models.JSONField()
+    type = models.TextField()
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+
 class Report(models.Model):
     class Meta:
         unique_together = (('date','state'))
@@ -18,7 +24,7 @@ class Report(models.Model):
     
     # -------------------------------- Basic stats ------------------------------- #
     date = models.DateTimeField()
-    state = models.ForeignKey(State, on_delete=models.DO_NOTHING) # NOTE: state have index by default being a ForeignKey (https://stackoverflow.com/questions/5984842/does-django-automatically-generate-indexes-for-foreign-keys-columns)
+    state = models.ForeignKey(State, on_delete=models.CASCADE) # NOTE: state have index by default being a ForeignKey (https://stackoverflow.com/questions/5984842/does-django-automatically-generate-indexes-for-foreign-keys-columns)
 
     # ----------------------------------- Death ---------------------------------- #
     death = models.IntegerField(blank=True) # total deaths (confirmed + probable)

@@ -1,4 +1,4 @@
-from .models import State, Report
+from .models import Polygon, State, Report
 from rest_framework import serializers
 
 class StateSerializer(serializers.HyperlinkedModelSerializer):
@@ -6,6 +6,14 @@ class StateSerializer(serializers.HyperlinkedModelSerializer):
         model = State
         fields = ['id', 'name', 'initials']
 
+class PolygonSerializer(serializers.HyperlinkedModelSerializer):
+    state = StateSerializer()
+
+    class Meta:
+        model = Polygon
+        fields = [
+            'state', 'coordinates', 'type'
+        ]
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Report

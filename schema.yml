@@ -4,9 +4,44 @@ info:
   version: 1.0.0
   description: Your project description
 paths:
-  /api-covid/groups/:
+  /api-covid/date-range-reports/{year}/{month}/{day}/{day_range}/:
     get:
-      operationId: api_covid_groups_list
+      operationId: api_covid_date_range_reports_list
+      description: |-
+        Report from all states in a range of days
+        look up by start day
+        and day interval
+      parameters:
+      - in: path
+        name: day
+        schema:
+          type: string
+          pattern: ^[12]\d|3[01]|0?[1-9]|$
+        required: true
+      - in: path
+        name: day_range
+        schema:
+          type: string
+          pattern: ^1[0-9]|0?[1-9]|20$
+        required: true
+      - in: path
+        name: month
+        schema:
+          type: string
+          pattern: ^1[012]|0?[1-9]$
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: year
+        schema:
+          type: string
+          pattern: ^[12][0-9]{3}$
+        required: true
       tags:
       - api-covid
       security:
@@ -18,46 +53,38 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Report'
+                $ref: '#/components/schemas/PaginatedReportList'
           description: ''
-    post:
-      operationId: api_covid_groups_create
-      tags:
-      - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Report'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Report'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Report'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Report'
-          description: ''
-  /api-covid/groups/{id}/:
+  /api-covid/date-reports/{year}/{month}/{day}/:
     get:
-      operationId: api_covid_groups_retrieve
+      operationId: api_covid_date_reports_list
+      description: |-
+        Report from all states in a single day
+        look up by date (year, month, day)
       parameters:
       - in: path
-        name: id
+        name: day
+        schema:
+          type: string
+          pattern: ^[12]\d|3[01]|0?[1-9]|$
+        required: true
+      - in: path
+        name: month
+        schema:
+          type: string
+          pattern: ^1[012]|0?[1-9]$
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
         schema:
           type: integer
-        description: A unique integer value identifying this report.
+      - in: path
+        name: year
+        schema:
+          type: string
+          pattern: ^[12][0-9]{3}$
         required: true
       tags:
       - api-covid
@@ -70,96 +97,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Report'
+                $ref: '#/components/schemas/PaginatedReportList'
           description: ''
-    put:
-      operationId: api_covid_groups_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this report.
-        required: true
-      tags:
-      - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Report'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Report'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Report'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Report'
-          description: ''
-    patch:
-      operationId: api_covid_groups_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this report.
-        required: true
-      tags:
-      - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedReport'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedReport'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedReport'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Report'
-          description: ''
-    delete:
-      operationId: api_covid_groups_destroy
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this report.
-        required: true
-      tags:
-      - api-covid
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '204':
-          description: No response body
-  /api-covid/users/:
+  /api-covid/polygons:
     get:
-      operationId: api_covid_users_list
+      operationId: api_covid_polygons_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api-covid
       security:
@@ -171,46 +120,74 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/State'
+                $ref: '#/components/schemas/PaginatedPolygonList'
           description: ''
-    post:
-      operationId: api_covid_users_create
+  /api-covid/reports/:
+    get:
+      operationId: api_covid_reports_list
+      description: All reports
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/State'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/State'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/State'
-        required: true
       security:
       - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/State'
+                $ref: '#/components/schemas/PaginatedReportList'
           description: ''
-  /api-covid/users/{id}/:
+  /api-covid/state-reports/{state_id}/:
     get:
-      operationId: api_covid_users_retrieve
+      operationId: api_covid_state_reports_list
+      description: |-
+        All report (all days) for a state
+        lookup by state id (stored in report)
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: state_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api-covid
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReportList'
+          description: ''
+  /api-covid/state/id/{id}/:
+    get:
+      operationId: api_covid_state_id_retrieve
+      description: |-
+        Detail of a state
+        lookup by id
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this state.
         required: true
       tags:
       - api-covid
@@ -225,29 +202,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
           description: ''
-    put:
-      operationId: api_covid_users_update
+  /api-covid/state/init/{initials}/:
+    get:
+      operationId: api_covid_state_init_retrieve
+      description: |-
+        Detail of a state
+        lookup by initials
       parameters:
       - in: path
-        name: id
+        name: initials
         schema:
-          type: integer
-        description: A unique integer value identifying this state.
+          type: string
         required: true
       tags:
       - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/State'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/State'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/State'
-        required: true
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -259,28 +227,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
           description: ''
-    patch:
-      operationId: api_covid_users_partial_update
+  /api-covid/state/name/{name}/:
+    get:
+      operationId: api_covid_state_name_retrieve
+      description: |-
+        Detail of a state
+        lookup by name
       parameters:
       - in: path
-        name: id
+        name: name
         schema:
-          type: integer
-        description: A unique integer value identifying this state.
+          type: string
         required: true
       tags:
       - api-covid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedState'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedState'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedState'
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -292,15 +252,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
           description: ''
-    delete:
-      operationId: api_covid_users_destroy
+  /api-covid/states/:
+    get:
+      operationId: api_covid_states_list
+      description: Detail of all states
       parameters:
-      - in: path
-        name: id
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
         schema:
           type: integer
-        description: A unique integer value identifying this state.
-        required: true
       tags:
       - api-covid
       security:
@@ -308,49 +270,107 @@ paths:
       - basicAuth: []
       - {}
       responses:
-        '204':
-          description: No response body
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStateList'
+          description: ''
 components:
   schemas:
-    PatchedReport:
+    PaginatedPolygonList:
       type: object
       properties:
-        date:
+        count:
+          type: integer
+          example: 123
+        next:
           type: string
-          format: date-time
-        state:
-          type: string
+          nullable: true
           format: uri
-        death:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        positive:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        negative:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-    PatchedState:
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Polygon'
+    PaginatedReportList:
       type: object
       properties:
-        name:
+        count:
+          type: integer
+          example: 123
+        next:
           type: string
-        initials:
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
           type: string
-          maxLength: 2
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+    PaginatedStateList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/State'
+    Polygon:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+        coordinates:
+          type: object
+          additionalProperties: {}
+      required:
+      - coordinates
+      - state
     Report:
       type: object
       properties:
         date:
           type: string
           format: date-time
-        state:
-          type: string
-          format: uri
+        state_id:
+          type: integer
+          readOnly: true
         death:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_confirmed:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_probable:
           type: integer
           maximum: 2147483647
           minimum: -2147483648
@@ -358,22 +378,94 @@ components:
           type: integer
           maximum: 2147483647
           minimum: -2147483648
+        positive_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive_cases_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
         negative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        in_icu_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        in_icu_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        on_ventilator_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        on_ventilator_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        recovered:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_people_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_people_viral_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_viral_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive_tests_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative_tests_viral:
           type: integer
           maximum: 2147483647
           minimum: -2147483648
       required:
       - date
-      - state
+      - state_id
     State:
       type: object
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
         initials:
           type: string
           maxLength: 2
       required:
+      - id
       - initials
       - name
   securitySchemes:

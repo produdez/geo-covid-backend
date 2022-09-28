@@ -115,21 +115,56 @@ def print_settings():
 from tkinter import N
 import numpy as np
 from math import isnan
-from us_covid_api.models import Report, State
+from us_covid_api.models import Report, State, Polygon
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 
+def parse_state_data(df_geo: pd.DataFrame):
+
+    def parse_geo_data(record):
+        return pd.Series([*record.fields.values(), record.fields['st_asgeojson']])
+    def parse_geo_data_columns(geo_data):
+        columns = list(geo_data.iloc[0].fields.keys()) + ['geometry']
+        columns = list(map(lambda x: x.lower(), columns)) 
+        return columns
+
+    columns = parse_geo_data_columns(df_geo)
+    final_column = ['name', 'geometry', 'state', 'stusab']
+    temp = df_geo.apply(parse_geo_data, axis=1)
+    temp.columns = columns
+
+    df_geo = temp[final_column]
+    df_geo.columns = final_column
+
+    return df_geo
+
 def load_states(state_df: pd.DataFrame):
     def generate_state(state_record):
-        state = State(name=state_record['name'], initials=state_record['initials'])
+        state = State(
+            name=state_record['name'], 
+            initials=state_record['stusab'], 
+            id=state_record['state'],
+        )
         state.save()
+        polygon = Polygon(
+            coordinates=state_record['geometry']['coordinates'],
+            type=state_record['geometry']['type'],
+            state=state,
+        )
+        polygon.save()
     
     state_df.apply(generate_state, axis = 1)
+    print(f'State count: ', State.objects.count())
+    print(f'Polygon count: ', Polygon.objects.count())
 
 def load_reports(report_df: pd.DataFrame):
     def generate_report(report_record: pd.Series):
-        state = State.objects.get(initials=report_record['state'])
-
+        try:
+            state = State.objects.get(initials=report_record['state'])
+        except ObjectDoesNotExist as e:
+            print(f'Not found state: {report_record["state"]}')
+            state = None
+        if state is None: return None
         report_record.loc['state'] = state
         report_record.loc['date'] = make_aware(report_record.loc['date'])
         report_dict = {k:(v if not type(v) is float or not isnan(v) else None) for k, v in report_record.to_dict().items()}
@@ -138,6 +173,7 @@ def load_reports(report_df: pd.DataFrame):
         report_obj.save()
 
     report_df.apply(generate_report, axis=1)
+    print(f'Report count: ', Report.objects.count())
 
 
 # In[7]:
@@ -183,10 +219,11 @@ def run(*args):
     print('-----DONE PREP-----------------')
     # Data processing part
     df = pd.read_csv('data/all-states-history.csv', parse_dates=['date'])
-    df_state = pd.read_json('data/states.json')
+    df_geo = pd.read_json('data/us-state-boundaries.json')
     print('Shape df: ', df.shape)
-    print('Shape df_state: ', df_state.shape)
     df.columns = list(df.columns.map(lambda x: camel_case_to_snake_case(x)))
+    df_state = parse_state_data(df_geo)
+    print('Shape df_state: ', df_state.shape)
     load_states(df_state)
     load_reports(df)
     print('Done importing')

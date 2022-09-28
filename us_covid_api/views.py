@@ -1,11 +1,9 @@
-from django.http import HttpResponse
-from .models import State, Report
-from rest_framework import viewsets, generics
-from us_covid_api.serializers import StateSerializer, ReportSerializer
+from .models import Polygon, State, Report
+from rest_framework import generics
+from us_covid_api.serializers import PolygonSerializer, StateSerializer, ReportSerializer
 from rest_framework.exceptions import NotFound
 from datetime import datetime, time, timedelta
 from django.utils.timezone import make_aware
-from rest_framework.renderers import JSONRenderer
 
 
 class StatesDetail(generics.ListAPIView):
@@ -102,3 +100,7 @@ class DayRangeReport(generics.ListAPIView):
             return Report.objects.filter(date__range= time_range)
         except Exception as _:
             raise NotFound('Invalid date (must be yyyy/mm/dd)')
+
+class Polygons(generics.ListAPIView):
+    queryset = Polygon.objects.all()
+    serializer_class = PolygonSerializer
