@@ -346,9 +346,12 @@ components:
         coordinates:
           type: object
           additionalProperties: {}
+        type:
+          type: string
       required:
       - coordinates
       - state
+      - type
     Report:
       type: object
       properties:

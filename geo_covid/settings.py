@@ -17,10 +17,13 @@ import os
 # Default environment values
 env = environ.Env(
     # set casting, default value
+    DEPLOY_ENV=(str,'dev'),
     DEBUG=(bool, True),
     SECRET_KEY=(str,'django-insecure-3!-(=vu^&v0pp*w*o)&5$3(4wu#jm(7!w1y=!*61@93#h94_d$'),
+    DB_USERNAME=(str,'admin'),
+    DB_PASSWORD=(str,'admin'),
+    DB_URL=(str,'localhost'),
 )
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,8 +33,12 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # ! Important variables
+DEPLOY_ENV = env('DEPLOY_ENV')
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
+DB_USERNAME = env('DB_USERNAME')
+DB_PASSWORD = env('DB_PASSWORD')
+DB_URL = env('DB_URL')
 
 ALLOWED_HOSTS = ['*']
 
@@ -94,14 +101,20 @@ WSGI_APPLICATION = 'geo_covid.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+client = {
+    'host': DB_URL,
+    'username' : DB_USERNAME,
+    'password' : DB_PASSWORD,
+} if DEPLOY_ENV == 'production' else {
+    'host': 'localhost'
+}
+print('client: ', client)
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'geo-covid',
         'ENFORCE_SCHEMA': True,
-        'CLIENT': {
-           'host': 'localhost',
-        },
+        'CLIENT': client,
     }
 }
 
