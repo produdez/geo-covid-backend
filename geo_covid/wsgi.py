@@ -15,4 +15,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geo_covid.settings')
 
 application = get_wsgi_application()
 
-app = application
+# app = application
