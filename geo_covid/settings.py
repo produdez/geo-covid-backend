@@ -95,14 +95,14 @@ WSGI_APPLICATION = 'geo_covid.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'djongo',
-    #     'NAME': 'geo-covid',
-    #     'ENFORCE_SCHEMA': True,
-    #     'CLIENT': {
-    #        'host': 'localhost',
-    #     },
-    # }
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'geo-covid',
+        'ENFORCE_SCHEMA': True,
+        'CLIENT': {
+           'host': 'localhost',
+        },
+    }
 }
 
 
