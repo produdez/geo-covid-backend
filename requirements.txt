@@ -11,3 +11,4 @@ django-extensions==3.2.0
 drf-spectacular-sidecar==2022.8.1
 django-cors-headers==3.13.0
 djangorestframework==3.13.1
+dnspython==2.2.1
