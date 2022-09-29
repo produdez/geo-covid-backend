@@ -13,3 +13,5 @@ django-cors-headers==3.13.0
 djangorestframework==3.13.1
 dnspython==2.2.1
 sqlparse==0.2.4
+wheel==0.37.1
+gunicorn==20.1.0
