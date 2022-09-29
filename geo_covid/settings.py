@@ -23,6 +23,7 @@ env = environ.Env(
     DB_USERNAME=(str,'admin'),
     DB_PASSWORD=(str,'admin'),
     DB_URL=(str,'localhost'),
+    DB_URL_TEST=(str,'localhost'),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,7 +31,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
+DB_URL_TEST = env('DB_URL_TEST')
+try:
+    print('test uri: ', DB_URL_TEST)
+    from pymongo import MongoClient
+    client = MongoClient(
+        host=DB_URL_TEST
+    )
+    db = client['geo-covid']
+    print(db.list_collection_names())
+except Exception as e:
+    print('exception: ', e)
 
 # ! Important variables
 DEPLOY_ENV = env('DEPLOY_ENV')
