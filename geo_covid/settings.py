@@ -120,10 +120,10 @@ client = {
     'host': 'localhost'
 }
 print('client: ', client)
-from requests import get
+# from requests import get
 
-ip = get('https://api.ipify.org').content.decode('utf8')
-print('My public IP address is: {}'.format(ip))
+# ip = get('https://api.ipify.org').content.decode('utf8')
+# print('My public IP address is: {}'.format(ip))
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
