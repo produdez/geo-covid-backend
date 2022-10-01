@@ -19,5 +19,7 @@ urlpatterns = [
         views.DayRangeReport.as_view()
     ),
     # Polygon paths
-    path('polygons', views.Polygons.as_view(), name='polygons'),
+    path('polygons/', views.Polygons.as_view(), name='polygons'),
+    # Date
+    path('start-end-date/', views.StartEndDate.as_view(), name='start-end-date'),
 ]

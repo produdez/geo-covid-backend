@@ -15,6 +15,7 @@ import environ
 import os
 
 # Default environment values
+DEFAULT_DB_URL = 'mongodb://localhost:27017/'
 env = environ.Env(
     # set casting, default value
     DEPLOY_ENV=(str,'dev'),
@@ -23,7 +24,7 @@ env = environ.Env(
     DB_USERNAME=(str,'admin'),
     DB_PASSWORD=(str,'admin'),
     DB_URL=(str,'localhost'),
-    DB_URL_TEST=(str,'localhost'),
+    DB_URL_TEST=(str,DEFAULT_DB_URL),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,17 +32,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-DB_URL_TEST = env('DB_URL_TEST')
-try:
-    print('test uri: ', DB_URL_TEST)
-    from pymongo import MongoClient
-    client = MongoClient(
-        host=DB_URL_TEST
-    )
-    db = client['geo-covid']
-    print(db.list_collection_names())
-except Exception as e:
-    print('exception: ', e)
 
 # ! Important variables
 DEPLOY_ENV = env('DEPLOY_ENV')
@@ -50,6 +40,18 @@ DEBUG = env('DEBUG')
 DB_USERNAME = env('DB_USERNAME')
 DB_PASSWORD = env('DB_PASSWORD')
 DB_URL = env('DB_URL')
+
+
+DB_URL_TEST = env('DB_URL_TEST') if DEPLOY_ENV == 'production' else DEFAULT_DB_URL
+try:
+    from pymongo import MongoClient
+    client = MongoClient(
+        host=DB_URL_TEST
+    )
+    db = client['geo-covid']
+    print('Db collection list: ',db.list_collection_names())
+except Exception as e:
+    print('exception: ', e)
 
 ALLOWED_HOSTS = ['*']
 

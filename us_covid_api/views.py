@@ -4,6 +4,9 @@ from us_covid_api.serializers import PolygonSerializer, StateSerializer, ReportS
 from rest_framework.exceptions import NotFound
 from datetime import datetime, time, timedelta
 from django.utils.timezone import make_aware
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers
 
 
 class StatesDetail(generics.ListAPIView):
@@ -104,3 +107,15 @@ class DayRangeReport(generics.ListAPIView):
 class Polygons(generics.ListAPIView):
     queryset = Polygon.objects.all()
     serializer_class = PolygonSerializer
+
+class StartEndDate(APIView):
+    serializer_class = serializers.BaseSerializer
+    def get(self,request, format=None):
+        first_date = Report.objects.order_by("date").first().date  # type: ignore
+        last_date = Report.objects.order_by("-date").first().date  # type: ignore
+        print(last_date, first_date)
+        return Response({
+            'start' : first_date,
+            'end' : last_date,
+            'range' : (last_date - first_date).days
+        })
