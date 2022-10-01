@@ -109,7 +109,7 @@ class Polygons(generics.ListAPIView):
     serializer_class = PolygonSerializer
 
 class StartEndDate(APIView):
-    serializer_class = serializers.BaseSerializer
+    serializer_class = serializers.Serializer
     def get(self,request, format=None):
         first_date = Report.objects.order_by("date").first().date  # type: ignore
         last_date = Report.objects.order_by("-date").first().date  # type: ignore
