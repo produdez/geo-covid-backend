@@ -115,7 +115,7 @@ def print_settings():
 from tkinter import N
 import numpy as np
 from math import isnan
-from us_covid_api.models import Report, State, Polygon
+from us_covid_api.models import Report, State, Polygon, GlobalReport
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.timezone import make_aware
 
@@ -149,7 +149,9 @@ def load_states(state_df: pd.DataFrame):
         polygon = Polygon(
             coordinates=state_record['geometry']['coordinates'],
             type=state_record['geometry']['type'],
-            state=state,
+            state_name=state_record['name'], 
+            state_initials=state_record['stusab'], 
+            state_id=state_record['state'],
         )
         polygon.save()
     
@@ -174,6 +176,17 @@ def load_reports(report_df: pd.DataFrame):
 
     report_df.apply(generate_report, axis=1)
     print(f'Report count: ', Report.objects.count())
+
+def load_global_data(global_df: pd.DataFrame):
+    def generate_global_report(report_record: pd.Series):
+        report_record.loc['date'] = make_aware(report_record.loc['date'])
+        report_dict = {k:(v if not type(v) is float or not isnan(v) else None) for k, v in report_record.to_dict().items()}
+
+        report_obj = GlobalReport(id=None, **report_dict)
+        report_obj.save()
+    
+    global_df.apply(generate_global_report, axis=1)
+    print(f'Global Report count: ', GlobalReport.objects.count())
 
 
 # In[7]:
@@ -217,7 +230,12 @@ def run(*args):
     if 'no-generate-schema' not in args: generate_drf_spec_schema()
     if 'no-print-settings' not in args: print_settings()
     print('-----DONE PREP-----------------')
-    # Data processing part
+    # Process global data (data for all states)
+    df_global = pd.read_csv('data/national-history.csv', parse_dates=['date'])
+    df_global.columns = list(df_global.columns.map(lambda x: camel_case_to_snake_case(x)))
+    print('Global data: ', df_global.shape)
+    load_global_data(df_global)
+    # Local data processing step
     df = pd.read_csv('data/all-states-history.csv', parse_dates=['date'])
     df_geo = pd.read_json('data/us-state-boundaries.json')
     print('Shape df: ', df.shape)
@@ -226,6 +244,7 @@ def run(*args):
     print('Shape df_state: ', df_state.shape)
     load_states(df_state)
     load_reports(df)
+
     print('Done importing')
 
 
@@ -235,7 +254,8 @@ def run(*args):
 # ''' Notebook test run '''
 import threading
 import time
-NOTEBOOK_ARGS = []
+NOTEBOOK_ARGS = [
+]
 
 if IS_NOTEBOOK:
     print("Main    : before creating thread")
