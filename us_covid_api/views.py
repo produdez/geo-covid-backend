@@ -1,13 +1,14 @@
-from .models import Polygon, State, Report
+from .models import GlobalReport, Polygon, State, Report
 from rest_framework import generics
-from us_covid_api.serializers import PolygonSerializer, StateSerializer, ReportSerializer
+from us_covid_api.serializers import GlobalReportSerializer, PolygonSerializer, StateSerializer, ReportSerializer
 from rest_framework.exceptions import NotFound
 from datetime import datetime, time, timedelta
 from django.utils.timezone import make_aware
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 class StatesDetail(generics.ListAPIView):
     '''
@@ -15,6 +16,10 @@ class StatesDetail(generics.ListAPIView):
     '''
     queryset = State.objects.all()
     serializer_class = StateSerializer
+
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 class StateDetail(generics.RetrieveAPIView):
     '''
         Detail of a state
@@ -24,6 +29,10 @@ class StateDetail(generics.RetrieveAPIView):
     queryset = State.objects.all()
     serializer_class = StateSerializer
 
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
 class StateByInitials(generics.RetrieveAPIView):
     '''
         Detail of a state
@@ -32,6 +41,10 @@ class StateByInitials(generics.RetrieveAPIView):
     lookup_field = 'initials'
     queryset = State.objects.all()
     serializer_class = StateSerializer
+
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 class StateByName(generics.RetrieveAPIView):
     '''
         Detail of a state
@@ -41,12 +54,18 @@ class StateByName(generics.RetrieveAPIView):
     queryset = State.objects.all()
     serializer_class = StateSerializer
 
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
 class Reports(generics.ListAPIView):
     '''
         All reports
     '''
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
+    # ! This endpoint is rarely ever used so no caching
+
 
 class StateReports(generics.ListAPIView):
     '''
@@ -59,6 +78,10 @@ class StateReports(generics.ListAPIView):
     def get_queryset(self):
         state_id = self.kwargs[self.lookup_field]
         return Report.objects.filter(state_id=state_id)
+    
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 
 class SingeDayReport(generics.ListAPIView):
     '''
@@ -80,6 +103,10 @@ class SingeDayReport(generics.ListAPIView):
             return Report.objects.filter(date__range= time_range)
         except Exception as _:
             raise NotFound('Invalid date (must be yyyy/mm/dd)')
+    
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 
 class DayRangeReport(generics.ListAPIView):
     '''
@@ -104,12 +131,21 @@ class DayRangeReport(generics.ListAPIView):
         except Exception as _:
             raise NotFound('Invalid date (must be yyyy/mm/dd)')
 
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
 class Polygons(generics.ListAPIView):
     queryset = Polygon.objects.all()
     serializer_class = PolygonSerializer
 
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
 class StartEndDate(APIView):
     serializer_class = serializers.Serializer
+    @method_decorator(cache_page(60*60*2))
     def get(self,request, format=None):
         first_date = Report.objects.order_by("date").first().date  # type: ignore
         last_date = Report.objects.order_by("-date").first().date  # type: ignore
@@ -119,3 +155,12 @@ class StartEndDate(APIView):
             'end' : last_date,
             'range' : (last_date - first_date).days
         })
+
+
+class GlobalReports(generics.ListAPIView):
+    queryset = GlobalReport.objects.all()
+    serializer_class = GlobalReportSerializer
+
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)

@@ -8,24 +8,25 @@ from djongo import models
 class State(models.Model):
     initials = models.CharField(max_length=2, unique=True)
     name = models.TextField(unique=True)
+    class Meta:
+        ordering = ['id']
 
 class Polygon(models.Model):
-    coordinates = models.JSONField()
+    state_id = models.IntegerField(unique=True)
+    state_name =  models.TextField(unique=True)
+    state_initials = models.CharField(max_length=2, unique=True)
     type = models.TextField()
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    coordinates = models.JSONField()
 
-class Report(models.Model):
     class Meta:
-        unique_together = (('date','state'))
-        indexes = [
-            models.Index(fields=['date']),
-        ]
-        ordering = ['date']
-    
-    # -------------------------------- Basic stats ------------------------------- #
-    date = models.DateTimeField()
-    state = models.ForeignKey(State, on_delete=models.CASCADE) # NOTE: state have index by default being a ForeignKey (https://stackoverflow.com/questions/5984842/does-django-automatically-generate-indexes-for-foreign-keys-columns)
+        ordering = ['state_id']
 
+    
+
+class AbstractReport(models.Model):
+    class Meta:
+        abstract = True
+    
     # ----------------------------------- Death ---------------------------------- #
     death = models.IntegerField(blank=True) # total deaths (confirmed + probable)
     death_confirmed = models.IntegerField(blank=True) # total confirmed deaths
@@ -98,3 +99,25 @@ class Report(models.Model):
     # These two attribute have no meaning for story telling
     total_test_encounters_viral = models.IntegerField(blank=True) # total tests done (1 person counts as 1 each day)
     total_test_encounters_viral_increase = models.IntegerField(blank=True) # total people tested today
+
+class Report(AbstractReport):
+    class Meta:
+        unique_together = (('date','state'))
+        indexes = [
+            models.Index(fields=['date']),
+        ]
+        ordering = ['date']
+
+    date = models.DateTimeField()
+    state = models.ForeignKey(State, on_delete=models.CASCADE) # NOTE: state have index by default being a ForeignKey (https://stackoverflow.com/questions/5984842/does-django-automatically-generate-indexes-for-foreign-keys-columns)
+
+class GlobalReport(AbstractReport):
+    class Meta:
+        indexes = [
+            models.Index(fields=['date']),
+        ]
+        ordering = ['date']
+
+    date = models.DateTimeField(unique=True)
+    states = models.IntegerField()
+

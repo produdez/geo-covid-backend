@@ -99,7 +99,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedReportList'
           description: ''
-  /api-covid/polygons:
+  /api-covid/global-reports/:
+    get:
+      operationId: api_covid_global_reports_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api-covid
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGlobalReportList'
+          description: ''
+  /api-covid/polygons/:
     get:
       operationId: api_covid_polygons_list
       parameters:
@@ -146,6 +169,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedReportList'
           description: ''
+  /api-covid/start-end-date/:
+    get:
+      operationId: api_covid_start_end_date_retrieve
+      tags:
+      - api-covid
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /api-covid/state-reports/{state_id}/:
     get:
       operationId: api_covid_state_reports_list
@@ -278,6 +313,131 @@ paths:
           description: ''
 components:
   schemas:
+    GlobalReport:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        states:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_confirmed:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        death_probable:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive_cases_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        hospitalized_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        in_icu_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        in_icu_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        on_ventilator_cumulative:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        on_ventilator_currently:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        recovered:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_people_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_people_viral_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_tests_viral_increase:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        positive_tests_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        negative_tests_viral:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - date
+      - states
+    PaginatedGlobalReportList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GlobalReport'
     PaginatedPolygonList:
       type: object
       properties:
@@ -341,16 +501,25 @@ components:
     Polygon:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/State'
+        state_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        type:
+          type: string
+        state_name:
+          type: string
+        state_initials:
+          type: string
+          maxLength: 2
         coordinates:
           type: object
           additionalProperties: {}
-        type:
-          type: string
       required:
       - coordinates
-      - state
+      - state_id
+      - state_initials
+      - state_name
       - type
     Report:
       type: object
