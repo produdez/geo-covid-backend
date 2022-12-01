@@ -136,6 +136,9 @@ class DayRangeReport(generics.ListAPIView):
         return super().get(*args, **kwargs)
 
 class Polygons(generics.ListAPIView):
+    '''
+        Polygon data of states (used for map rendering)
+    '''
     queryset = Polygon.objects.all()
     serializer_class = PolygonSerializer
 
@@ -144,6 +147,9 @@ class Polygons(generics.ListAPIView):
         return super().get(*args, **kwargs)
 
 class StartEndDate(APIView):
+    '''
+        First and Last 
+    '''
     serializer_class = serializers.Serializer
     @method_decorator(cache_page(60*60*2))
     def get(self,request, format=None):
@@ -158,6 +164,10 @@ class StartEndDate(APIView):
 
 
 class GlobalReports(generics.ListAPIView):
+    '''
+        All National Summarized reports
+        aka: summarized report of all states in a given day
+    '''
     queryset = GlobalReport.objects.all()
     serializer_class = GlobalReportSerializer
 
